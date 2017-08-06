@@ -13,17 +13,24 @@ sizes <- c(95, 61, 99, 113, 99, 85, 108,
            99, 99, 91, 107, 107, 
            93, 103, 105, 104, 99, 
            86, 103, 102, 96, 102)
-
+# Vectors describing the superpopulations.
+superpopulations <- c("African", "American", "European", "East Asian", "South Asian")
+# Start and end indices of each superpopulation in the subpopulations list.
+super.start <- c(1, 8, 12, 17, 22)
+super.end <- c(7, 11, 16, 21, 26)
+# Make a list.
+super = list("superpopulations" = superpopulations, 
+             "super.s" = super.start, 
+             "super.e" = super.end)
 #______________________________MERGE_AND_ANALYZE________________________________
 # Merge tables.
 tables = mergeData(populations, alt = TRUE, var = TRUE, tot = TRUE)
 # Analyze.
-results = analyzeData(populations, sizes, tables)
+results = analyzeData(populations, sizes, super, tables)
 
-# Define data to be plotted.
+# Define data to be plotted...
 # Coordinates needed for plotting pFstMatrix.alt.median by chromosome number.
-coordinates = as.data.frame(tables["coordinates"])
-names(coordinates) = c("CHR", "POS")
+coordinates = tables$coordinates
 
 # Results matrices.
 varMatrix.alt = results$varMatrix.alt
@@ -37,6 +44,7 @@ pFstMatrix.tot = results$pFstMatrix.tot
 
 pFstMatrix.alt.median = results$pFstMatrix.alt.median
 
+pFstMatrix.super = results$pFstMatrix.super
 
 #____________________________________PLOT_______________________________________
 # Define the labels for Matrices.
@@ -77,6 +85,9 @@ myImagePlot(pFstMatrix.var, min = 0, max = fstMax_altvartot,
             cex=0.8, title = myLabels[5])
 myImagePlot(pFstMatrix.tot, min = 0, max = fstMax_altvartot, 
             cex=0.8, title = myLabels[6])
+
+#______________________________pFstMatrix.super_______________________________
+myImagePlot(pFstMatrix.super, cex=1, title = myLabels[4])
 
 #_____________________________pFstMatrix.alt.median_____________________________
 myImagePlot(pFstMatrix.alt.median, border = FALSE, cex=0.8, title = myLabels[7])

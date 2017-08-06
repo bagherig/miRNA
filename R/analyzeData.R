@@ -13,7 +13,21 @@
 #' 
 #' @details This function was not designed for efficieny and speed. 
 #' 
-analyzeData <- function(populations, sizes, tables){
+analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
+  # KEYWORDS: .alt -> SNP frequencies
+  #           .var -> variation frequencies
+  #           .tot -> total-variation frequencies
+  #           .aor -> average of ratios
+  #           .roa -> ratio of averages
+  #           .super -> matrix for superpopulations
+  #
+  # Error checking:
+  if (is.null(populations)){ 
+    stop("a list of subpopulation codes must be specified!") }
+  if (is.null(sizes)){ 
+    stop("a list of subpopulation sizes must be specified!") }
+  
+  #___________________________ANALYZE SUBPOPULATIONS____________________________  
   # Initiate matrices and vectors to store the results.
   # Matrices for storing variances.
   varMatrix.alt = varMatrix.var = varMatrix.tot = 
@@ -30,26 +44,22 @@ analyzeData <- function(populations, sizes, tables){
   pVector = c()
   # Matrix to store all pVectors.
   pFstMatrix.alt.median = matrix(nrow=0, ncol=length(populations))
+  
   #_________________________________ANALYZE_____________________________________
   # Define input tables.
-  coordinates = as.data.frame(tables["coordinates"])
-  names(coordinates) = c("CHR", "POS")
+  coordinates = tables$coordinates
   altTable = varTable = totTable = NULL
   if ("altTable" %in% names(tables)){ 
-    altTable = as.data.frame(tables["altTable"])}
+    altTable = tables$altTable }
   if ("varTable" %in% names(tables)){ 
-    varTable = as.data.frame(tables["varTable"])}
+    varTable = tables$varTable }
   if ("totTable" %in% names(tables)){ 
-    totTable = as.data.frame(tables["totTable"])}
+    totTable = tables$totTable }
   
   numRows = max(nrow(altTable), nrow(varTable), nrow(totTable))
-  print(nrow(altTable))
-  print(nrow(varTable))
-  print(nrow(totTable))
-  print(numRows)
   # Go through every row of the table.
   for (r in 1:numRows){
-    # Print the row number.
+    # Print the row number being analyzed.
     cat("Analyzing row", r, "\n")
     # Clear pVector for each row.
     pVector = c()
@@ -72,7 +82,7 @@ analyzeData <- function(populations, sizes, tables){
     
     # Doing pairwise comparison
     for (i in 1:length(populations)){
-      for (j in i:length(populations)){
+      for (j in 1:length(populations)){
         # Calculate the sum of the sizes of the two subpopulations.
         size = sizes[i] + sizes[j]
         # Calculate the proportion of size of each subpopulation.
@@ -168,7 +178,61 @@ analyzeData <- function(populations, sizes, tables){
     rownames(pFstMatrix.alt.median) = 
       paste(coordinates$CHR, ":", coordinates$POS, sep = "")
   }
-  # Return a list of the matrices, along with the coordinate
+  
+  #___________________________ANALYZE SUPERPOPULATIONS____________________________
+  if (!(is.null(altTable) & is.null(super))){ 
+    cat("Analyzing super-populations...\n")
+    # Create the superpopulations table from altTable.
+    superNames = super$superpopulations
+    super.s = super$super.s
+    super.e = super$super.e
+    sizes.super = c()
+    for (pop in 1:length(superNames)){
+      sizes.super = c(sizes.super, sum(sizes[super.s[pop]:super.e[pop]]))
+    }
+
+    altTable.super = matrix(ncol = 5, nrow = nrow(altTable))
+    colnames(altTable.super) = superNames
+    # Change NA's to 0's.
+    altTable[is.na(altTable)] = 0
+    for (i in 1:length(superNames)){
+      altTable.super[, i] = apply(altTable[, super.s[i]:super.e[i]], 
+                                  MARGIN = 1, FUN = sum) 
+    }
+    
+    # Same procedure as subpopulations from here on...
+    varMatrix.super = pBarMatrix.super = pFstMatrix.super =
+      matrix(data=0, nrow=length(superNames), ncol=length(superNames))
+
+    for (r in 1:numRows){
+      row.super = as.numeric(altTable.super[r,])
+      
+      row.super[is.na(row.super)] = 0
+      P.super = row.super / (sizes.super * 2)
+      for (i in 1:length(superNames)){
+        for (j in 1:length(superNames)){
+          size = sizes.super[i] + sizes.super[j]
+          W.i = sizes.super[i] / size
+          W.j = sizes.super[j] / size
+          # Compute variance.
+          var.super.ij = var(c(P.super[i], P.super[j])) / 2
+          varMatrix.super[i, j] = varMatrix.super[i, j] + var.super.ij
+          # Compute pBar
+          pBar.super.ij = sum(W.i * P.super[i], W.j * P.super[j])
+          pBarMatrix.super[i, j] = pBarMatrix.super[i, j] + pBar.super.ij
+        }
+      }
+    }
+
+    varMatrix.super = varMatrix.super / numRows
+    pBarMatrix.super = pBarMatrix.super / numRows
+    
+    pFstMatrix.super = 
+      varMatrix.super / (pBarMatrix.super * (1 - pBarMatrix.super))
+    colnames(pFstMatrix.super) = rownames(pFstMatrix.super) = superNames
+  }
+  #________________________________RETURN_______________________________________
+  # Return a list of the matrices.
   results = list()
   results[[1]] = varMatrix.alt
   results[[2]] = varMatrix.var
@@ -182,12 +246,15 @@ analyzeData <- function(populations, sizes, tables){
   results[[8]] = pFstMatrix.alt.aor
   results[[9]] = pFstMatrix.var
   results[[10]]= pFstMatrix.tot
-
+  
   results[[11]] = pFstMatrix.alt.median
+  
+  results[[12]] = pFstMatrix.super
   names(results) = c("varMatrix.alt", "varMatrix.var", "varMatrix.tot",
                      "pBarMatrix.alt", "pBarMatrix.var", "pBarMatrix.tot",
                      "pFstMatrix.alt.roa", "pFstMatrix.alt.aor",
                      "pFstMatrix.var", "pFstMatrix.tot", 
-                     "pFstMatrix.alt.median")
+                     "pFstMatrix.alt.median",
+                     "pFstMatrix.super")
   return(results)
 }

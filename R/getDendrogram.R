@@ -18,7 +18,7 @@ getDendrogram <- function(squareMatrix){
   colorGroups <- function(n) {
     if (is.leaf(n)) {
       a = attributes(n)
-      labCol <- groupColors[clusMember[which(names(clusMember) == a$label)]]
+      labCol <- groupColors[clusterGroups[which(names(clusterGroups) == a$label)]]
       attr(n, "nodePar") <- c(a$nodePar, lab.col = labCol)
     }
     return(n)
@@ -26,7 +26,7 @@ getDendrogram <- function(squareMatrix){
   # Make a dendrogram
   dendro = as.dendrogram(clustered)
   # Color different groups.
-  clusDendro = dendrapply(hcd, colorGroups)
+  clusDendro = dendrapply(dendro, colorGroups)
   
   return(clusDendro)
 }
