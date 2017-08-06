@@ -1,5 +1,7 @@
+# Function obtained from http://www.phaget4.org/R/image_matrix.html
+
 myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL, 
-                        cex=NULL, lwd=1, sub=FALSE, half=FALSE, ...){
+                        cex=0.7, lwd=0.3, sub=FALSE, ...){
   superl = c("African", "American", "European", "East Asian", "South Asian")
   supers = c(0, 7, 11, 16, 21, 26)
   if (is.null(min)) min <- min(x)
@@ -49,7 +51,7 @@ myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL,
   x <- x[reverse,]
   
   # Data Map
-  par(mar = c(4,6,2.5,2))
+  par(mar = c(6,6,2.5,2))
   image(1:length(xLabels), 1:length(yLabels), t(x), col=ColorRamp, xlab="",
         ylab="", axes=FALSE, zlim=c(min,max))
   if( !is.null(title) ){
@@ -57,17 +59,13 @@ myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL,
   }
   if (is.null(cex)){cex = 1 - (length(yLabels) / 200)}
   if (cex < 0.3) cex = 0.3
-  axis(BELOW<-1, at=1:length(xLabels), labels=xLabels, las=2, cex.axis=0.8)
+  axis(BELOW<-1, at=1:length(xLabels), labels=xLabels, las=2, cex.axis=cex)
   axis(LEFT <-2, at=1:length(yLabels), labels=yLabels, las=2,
        cex.axis=cex)
 
   if (border == TRUE){
     for (i in 0:length(xLabels)){
-      if (half){
-        yLen = 27 - i
-      } else {
-        yLen = length(yLabels)
-      }
+      yLen = length(yLabels)
       if (sub){
         if (i %in% supers){
           axis(2, pos = i+0.5, labels = FALSE, at = 0.5:(yLen+0.5),
@@ -79,11 +77,7 @@ myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL,
     }
     
     for (i in 0:length(yLabels)){
-      if (half){
-        xLen = 27 - i
-      } else {
-        xLen = length(xLabels)
-      }
+      xLen = length(xLabels)
       if (sub){
         if (i %in% (26-supers)){
           axis(1, pos = i+0.5, labels = FALSE, at = 0.5:(xLen+0.5), 
@@ -95,7 +89,7 @@ myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL,
     }
   }
   # Color Scale
-  par(mar = c(4,2.5,2.5,1))
+  par(mar = c(6,2.5,2.5,1))
   image(1, y=ColorLevels,
         z=matrix(data=ColorLevels, ncol=length(ColorLevels), nrow=1),
         col=ColorRamp,

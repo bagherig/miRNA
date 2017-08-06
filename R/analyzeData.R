@@ -11,6 +11,8 @@
 #'
 #' @examples analyzeData(list(altTable, varTable, totTable))
 #' 
+#' @details This function was not designed for efficieny and speed. 
+#' 
 analyzeData <- function(populations, sizes, tables){
   # Initiate matrices and vectors to store the results.
   # Matrices for storing variances.
@@ -55,22 +57,22 @@ analyzeData <- function(populations, sizes, tables){
     if (!(is.null(altTable))){ 
       row.alt = as.numeric(altTable[r,]) # Read the current row.
       row.alt[is.na(row.alt)] = 0   # switch NA values to 0.
-      P.alt = row.alt/(sizes*2)     # calculate the frequencies of this SNP.
+      P.alt = row.alt/(sizes * 2)     # calculate the frequencies of this SNP.
     }
     if (!(is.null(varTable))){ 
       row.var = as.numeric(varTable[r,]) # Read the current row.
       row.var[is.na(row.var)] = 0   # switch NA values to 0.
-      P.var = row.var/sizes         # calculate the frequencies of this SNP.
+      P.var = row.var/sizes       # calculate the frequencies of this variation.
     }
     if (!(is.null(totTable))){ 
       row.tot = as.numeric(totTable[r,]) # Read the current row.
       row.tot[is.na(row.tot)] = 0   # switch NA values to 0.
-      P.tot = row.tot/sizes         # calculate the frequencies of this SNP.
+      P.tot = row.tot/sizes  # calculate the frequencies of the total-variation.
     }
     
     # Doing pairwise comparison
     for (i in 1:length(populations)){
-      for (j in 1:length(populations)){
+      for (j in i:length(populations)){
         # Calculate the sum of the sizes of the two subpopulations.
         size = sizes[i] + sizes[j]
         # Calculate the proportion of size of each subpopulation.
@@ -92,6 +94,9 @@ analyzeData <- function(populations, sizes, tables){
           
           # Computer Fst.
           Fst.ij = var.alt.ij / (pBar.alt.ij * (1 - pBar.alt.ij))
+          # It is possible that both the variance and pBar are 0. In this case,
+          # R returns NaN for 0/0, however, we want an Fst value of 0.
+          if (is.nan(Fst.ij)) { Fst.ij = 0 }
           # Add to the matrix of Fst values. This matrix is for calculating 
           # genome-wide Fst by taking the average of ratios. We will divide by
           # the number of subpopulations at the end.
@@ -119,7 +124,6 @@ analyzeData <- function(populations, sizes, tables){
           pBar.tot.ij = sum(W.i * P.tot[i], W.j * P.tot[j])
           pBarMatrix.tot[i,j] = pBarMatrix.tot[i,j] + pBar.tot.ij
         }
-        #if (is.nan(Fst.ij)) Fst.ij = 0
       }
       if (!(is.null(altTable))){
         # Take the median of the Fst values calculated for subpopulation i.
@@ -164,22 +168,26 @@ analyzeData <- function(populations, sizes, tables){
     rownames(pFstMatrix.alt.median) = 
       paste(coordinates$CHR, ":", coordinates$POS, sep = "")
   }
-  # Return a list of the matrices.
+  # Return a list of the matrices, along with the coordinate
   results = list()
-  results["varMatrix.alt"] = varMatrix.alt
-  results["varMatrix.var"] = varMatrix.var
-  results["varMatrix.tot"] = varMatrix.tot
+  results[[1]] = varMatrix.alt
+  results[[2]] = varMatrix.var
+  results[[3]] = varMatrix.tot
   
-  results["pBarMatrix.alt"] = pBarMatrix.alt
-  results["pBarMatrix.var"] = pBarMatrix.var
-  results["pBarMatrix.tot"] = pBarMatrix.tot
+  results[[4]] = pBarMatrix.alt
+  results[[5]] = pBarMatrix.var
+  results[[6]] = pBarMatrix.tot
   
-  results["pFstMatrix.alt.roa"] = pFstMatrix.alt.roa
-  results["pFstMatrix.alt.aor"] = pFstMatrix.alt.aor
-  results["pFstMatrix.var"] = pFstMatrix.var
-  results["pFstMatrix.tot"] = pFstMatrix.tot
+  results[[7]] = pFstMatrix.alt.roa
+  results[[8]] = pFstMatrix.alt.aor
+  results[[9]] = pFstMatrix.var
+  results[[10]]= pFstMatrix.tot
 
-  results["pFstMatrix.alt.median"] = pFstMatrix.alt.median
-  
+  results[[11]] = pFstMatrix.alt.median
+  names(results) = c("varMatrix.alt", "varMatrix.var", "varMatrix.tot",
+                     "pBarMatrix.alt", "pBarMatrix.var", "pBarMatrix.tot",
+                     "pFstMatrix.alt.roa", "pFstMatrix.alt.aor",
+                     "pFstMatrix.var", "pFstMatrix.tot", 
+                     "pFstMatrix.alt.median")
   return(results)
 }
