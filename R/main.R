@@ -1,4 +1,5 @@
 # main.R
+# A script to anylaze the VCF data and plot the results.
 #
 # A vector of subpopulation codes.
 populations = c("ACB", "ASW", "ESN", "GWD", "LWK", "MSL", "YRI", # [1:7] AFRICAN
