@@ -8,11 +8,11 @@
 #'
 #' @examples getDendrogram(pFstMatrix.alt.roa)
 #' 
-getDendrogram <- function(squareMatrix){
+getDendrogram <- function(squareMatrix, numGroups){
   # Cluster.
   clustered = hclust(as.dist(squareMatrix))
   groupColors = c("blue", "red", "purple", "darkgreen", "brown")
-  clusterGroups = cutree(clustered, 6)
+  clusterGroups = cutree(clustered, numGroups)
   
   # Function to color leafs based on the groups.
   colorGroups <- function(n) {

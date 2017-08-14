@@ -35,7 +35,8 @@ mergeData <- function(populations, alt = TRUE, var = TRUE, tot = TRUE){
     table <- table[table$totFREQ >= 5, 
                    c("CHR", "POS", "ALT", "altFREQ", "varFREQ", "totFREQ")]
     
-    # Merge the tables by columns "CHR", "POS", and "ALT".
+    # Merge the tables by columns "CHR", "POS", and "ALT". Suppress warnigns for 
+    # duplicate column names.
     if (is.null(mer)){
       mer <- table
     } else {
@@ -70,7 +71,7 @@ mergeData <- function(populations, alt = TRUE, var = TRUE, tot = TRUE){
   }
   
   # Table of "CHR" and "POS"
-  tables[[4]] = mer[, c("CHR", "POS")]
+  tables[[4]] = mer[, c("CHR", "POS", "ALT")]
   names(tables) = c("altTable", "varTable", "totTable", "coordinates")
   return(tables)
 }

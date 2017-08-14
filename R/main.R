@@ -86,7 +86,7 @@ myImagePlot(pFstMatrix.var, min = 0, max = fstMax_altvartot,
 myImagePlot(pFstMatrix.tot, min = 0, max = fstMax_altvartot, 
             cex=0.8, title = myLabels[6])
 
-#______________________________pFstMatrix.super_______________________________
+#______________________________pFstMatrix.super_________________________________
 myImagePlot(pFstMatrix.super, cex=1, title = myLabels[4])
 
 #_____________________________pFstMatrix.alt.median_____________________________
@@ -104,7 +104,11 @@ filtered = pFstMatrix.alt.median[apply(pFstMatrix.alt.median[,1:26], MARGIN = 1,
                                        function(x) any(x >= 0.35)),]
 myImagePlot(filtered, border = TRUE, cex = 0.8, title = myLabels[8])
 
-#____________________________________Dendrogram_________________________________
-dendrogram = getDendrogram(pFstMatrix.alt.roa)
-par(mar=c(4,5,1,1))
-plot(dendrogram, ylab = "Fst")
+#________________________________Dendrogram_____________________________________
+par(mar=c(5,5,1,1))
+
+subDendrogram = getDendrogram(pFstMatrix.alt.roa, 6)
+plot(subDendrogram, ylab = "Fst")
+
+superDendrogram = getDendrogram(pFstMatrix.super, 5)
+plot(superDendrogram, ylab = "Fst")
