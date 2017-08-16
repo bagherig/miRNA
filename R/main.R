@@ -23,10 +23,16 @@ super.end <- c(7, 11, 16, 21, 26)
 super = list("superpopulations" = superpopulations, 
              "super.s" = super.start, 
              "super.e" = super.end)
+
+#______________________________EXTRACT_VARIATIONS_______________________________
+getVariations(populations)
+
 #______________________________MERGE_AND_ANALYZE________________________________
 # Merge tables.
+# 'tables': list of 4 tables: $altTable, $varTable, $totTable, and $coordinates.
 tables = mergeData(populations, alt = TRUE, var = TRUE, tot = TRUE)
 # Analyze.
+# 'results': list of 12 tables.
 results = analyzeData(populations, sizes, super, tables)
 
 # Define data to be plotted...
@@ -93,8 +99,8 @@ myImagePlot(pFstMatrix.super, cex=1, title = myLabels[4])
 #_____________________________pFstMatrix.alt.median_____________________________
 myImagePlot(pFstMatrix.alt.median, border = FALSE, cex=0.8, title = myLabels[7])
 
-# Plot pFstMatrix.alt.median by chromosome number (change the value of chr
-# to be the chromosome number.)
+# Plot pFstMatrix.alt.median by chromosome number.
+# (change the value of chr to be the chromosome number.)
 M = max(pFstMatrix.alt.median)
 chr = 22
 myImagePlot(pFstMatrix.alt.median[coordinates$CHR %in% chr, ], 
@@ -104,6 +110,7 @@ myImagePlot(pFstMatrix.alt.median[coordinates$CHR %in% chr, ],
 filtered = pFstMatrix.alt.median[apply(pFstMatrix.alt.median[,1:26], MARGIN = 1, 
                                        function(x) any(x >= 0.35)),]
 myImagePlot(filtered, border = TRUE, cex = 0.8, title = myLabels[8])
+
 
 #________________________________Dendrogram_____________________________________
 par(mar=c(5,5,1,1))

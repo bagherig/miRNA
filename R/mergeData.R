@@ -45,27 +45,33 @@ mergeData <- function(populations, alt = TRUE, var = TRUE, tot = TRUE){
     }
     
     # Remove duplicated rows.
-    mer = mer[!(duplicated(mer)),]
+    mer = mer[!(duplicated(mer)), ]
   }
   
   # Seperate "altFREQ", "varFREQ", and "totFREQ" columns into seperate tables.
   tables = vector(mode = "list", length = 4)
   if (alt){ 
-    altTable = mer[, seq(4, ncol(mer), 3)] 
+    # Select columns associcated with SNP frequency.
+    altTable = mer[, seq(4, ncol(mer), 3)]
+    altTable[is.na(altTable)] = 0
     colnames(altTable) = populations
     tables[[1]] = altTable
   }
   
   if (var){ 
+    # Select columns associcated with variation frequency.
     varTable = mer[, seq(5, ncol(mer), 3)] 
+    varTable[is.na(varTable)] = 0
     colnames(varTable) = populations
     tables[[2]] = varTable
   }
   
   if (tot){ 
+    # Select columns associcated with total-variation frequency.
     totTable = mer[, c(1, 2, seq(6, ncol(mer), 3))]
     # totTable can still contain duplicated rows. Remove them.
     totTable = totTable[!(duplicated(totTable)), 3:ncol(totTable)]
+    totTable[is.na(totTable)] = 0
     colnames(totTable) = populations
     tables[[3]] = totTable
   }
