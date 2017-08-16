@@ -1,31 +1,34 @@
 # main.R
 # A script to anylaze the VCF data and plot the results.
 #
-# A vector of subpopulation codes.
-populations = c("ACB", "ASW", "ESN", "GWD", "LWK", "MSL", "YRI", # [1:7] AFRICAN
-                "CLM", "MXL", "PEL", "PUR",                    # [8:11] AMERICAN
-                "CEU", "FIN", "GBR", "IBS", "TSI",            # [12:16] EUROPEAN
-                "CDX", "CHB", "CHS", "JPT", "KHV",          # [17,21] EAST ASIAN
-                "BEB", "GIH", "ITU", "PJL", "STU")          # [22:26]SOUTH ASIAN
-# A vector of the sizes of subpopulations. The order must be the same as
-# the "populations" vector.
-sizes <- c(95, 61, 99, 113, 99, 85, 108, 
-           94, 64, 85, 104, 
-           99, 99, 91, 107, 107, 
-           93, 103, 105, 104, 99, 
-           86, 103, 102, 96, 102)
-# Vectors describing the superpopulations.
-superpopulations <- c("African", "American", "European", "East Asian", "South Asian")
-# Start and end indices of each superpopulation in the subpopulations list.
-super.start <- c(1, 8, 12, 17, 22)
-super.end <- c(7, 11, 16, 21, 26)
-# Make a list.
-super = list("superpopulations" = superpopulations, 
-             "super.s" = super.start, 
-             "super.e" = super.end)
+# Defining some variables:
+if (TRUE){
+  # A vector of subpopulation codes.
+  populations = c("ACB", "ASW", "ESN", "GWD", "LWK", "MSL", "YRI", # [1:7] AFRICAN
+                  "CLM", "MXL", "PEL", "PUR",                    # [8:11] AMERICAN
+                  "CEU", "FIN", "GBR", "IBS", "TSI",            # [12:16] EUROPEAN
+                  "CDX", "CHB", "CHS", "JPT", "KHV",          # [17,21] EAST ASIAN
+                  "BEB", "GIH", "ITU", "PJL", "STU")          # [22:26]SOUTH ASIAN
+  # A vector of the sizes of subpopulations. The order must be the same as
+  # the "populations" vector.
+  sizes <- c(95, 61, 99, 113, 99, 85, 108, 
+             94, 64, 85, 104, 
+             99, 99, 91, 107, 107, 
+             93, 103, 105, 104, 99, 
+             86, 103, 102, 96, 102)
+  # Vectors describing the superpopulations.
+  superpopulations <- c("African", "American", "European", "East Asian", "South Asian")
+  # Start and end indices of each superpopulation in the subpopulations list.
+  super.start <- c(1, 8, 12, 17, 22)
+  super.end <- c(7, 11, 16, 21, 26)
+  # Make a list.
+  super = list("superpopulations" = superpopulations, 
+               "super.s" = super.start, 
+               "super.e" = super.end)
+}
 
 #______________________________EXTRACT_VARIATIONS_______________________________
-getVariations(populations)
+getVariations(populations[1])
 
 #______________________________MERGE_AND_ANALYZE________________________________
 # Merge tables.
@@ -36,23 +39,24 @@ tables = mergeData(populations, alt = TRUE, var = TRUE, tot = TRUE)
 results = analyzeData(populations, sizes, super, tables)
 
 # Define data to be plotted...
+if (TRUE){
 # Coordinates needed for plotting pFstMatrix.alt.median by chromosome number.
-coordinates = tables$coordinates
-
-# Results matrices.
-varMatrix.alt = results$varMatrix.alt
-varMatrix.var = results$varMatrix.var
-varMatrix.tot = results$varMatrix.tot
-
-pFstMatrix.alt.roa = results$pFstMatrix.alt.roa
-pFstMatrix.alt.aor = results$pFstMatrix.alt.aor
-pFstMatrix.var = results$pFstMatrix.var
-pFstMatrix.tot = results$pFstMatrix.tot
-
-pFstMatrix.alt.median = results$pFstMatrix.alt.median
-
-pFstMatrix.super = results$pFstMatrix.super
-
+  coordinates = tables$coordinates
+  
+  # Results matrices.
+  varMatrix.alt = results$varMatrix.alt
+  varMatrix.var = results$varMatrix.var
+  varMatrix.tot = results$varMatrix.tot
+  
+  pFstMatrix.alt.roa = results$pFstMatrix.alt.roa
+  pFstMatrix.alt.aor = results$pFstMatrix.alt.aor
+  pFstMatrix.var = results$pFstMatrix.var
+  pFstMatrix.tot = results$pFstMatrix.tot
+  
+  pFstMatrix.alt.median = results$pFstMatrix.alt.median
+  
+  pFstMatrix.super = results$pFstMatrix.super
+}
 #____________________________________PLOT_______________________________________
 # Define the labels for Matrices.
 myLabels = c("Genetic distance based on variance of\nSNP frequencies",

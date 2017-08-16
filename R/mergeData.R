@@ -15,7 +15,7 @@
 #' 
 mergeData <- function(populations, alt = TRUE, var = TRUE, tot = TRUE){
   # Check if at least one of alt, var, or tot is TRUE.
-  if (!(alt & var & tot)){
+  if (!(alt | var | tot)){
     stop("At least one of alt, var, or tot must be TRUE.")
   }
   # Define the path to VCF folder.
