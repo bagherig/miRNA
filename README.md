@@ -14,7 +14,7 @@ The R code requires a specific directory structure. Create an R project (anywher
                                    placed in a folder named as the population code. 
                ├── ALL           # The folder containing the VCF data for all populations. Downloaded from 1000 
                                    genomes project.           
-               ├── ACB  # The folder containing the VCF files for population 1. Each of these folders must
+               ├── ACB           # The folder containing the VCF files for population 1. Each of these folders must
                                    contain the VCF files for this population seperated by chromosome number (1-22).
                    ├── chr1.vcf.gz
                    ├── chr2.vcf.gz
