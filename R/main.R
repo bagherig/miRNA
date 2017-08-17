@@ -33,15 +33,16 @@ if (TRUE){
 }
 
 #______________________________EXTRACT_VARIATIONS_______________________________
-getVariations(populations[1], 1, 2, "results2")
+getVariations(populations[1])
 
 #______________________________MERGE_AND_ANALYZE________________________________
 # Merge tables.
 # 'tables': list of 4 tables: $altTable, $varTable, $totTable, and $coordinates.
-tables = mergeData(populations, alt = TRUE, var = TRUE, tot = TRUE)
+tables = mergeData(populations, alt = TRUE, var = TRUE, tot = TRUE, 
+                   verbose = TRUE)
 # Analyze.
 # 'results': list of 12 tables.
-results = analyzeData(populations, sizes, super, tables)
+results = analyzeData(populations, sizes, super, tables, verbose = TRUE)
 
 # Define data to be plotted...
 if (TRUE){
@@ -71,7 +72,7 @@ myLabels = c("Genetic distance based on variance of\nSNP frequencies",
              "Genetic distance based on Fst of\nvariation frequencies",
              "Genetic distance based on Fst of\ntotal-variation frequencies",
              "Fst estimates per SNP",
-             "SNPs with high Fst values (>0.35)")
+             "SNPs with high Fst values (>0.25)")
 
 # Plot......
 #______________________________Pairwise variance plots__________________________
@@ -117,8 +118,8 @@ myImagePlot(pFstMatrix.alt.median[coordinates$CHR %in% chr, ],
 
 # Filter rows containing at least one Fst value > 0.35
 filtered = pFstMatrix.alt.median[apply(pFstMatrix.alt.median[,1:26], MARGIN = 1, 
-                                       function(x) any(x >= 0.35)),]
-myImagePlot(filtered, border = TRUE, cex = 0.8, title = myLabels[8])
+                                       function(x) any(x > 0.25)),]
+myImagePlot(filtered, border = TRUE, cex = 0.62, title = myLabels[8])
 
 
 #________________________________Dendrogram_____________________________________

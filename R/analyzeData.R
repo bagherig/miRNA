@@ -13,7 +13,8 @@
 #' 
 #' @details This function was not designed for efficieny and speed. 
 #' 
-analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
+analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, 
+                        tables = NULL, verbose = TRUE){
   # KEYWORDS: .alt -> SNP frequencies
   #           .var -> variation frequencies
   #           .tot -> total-variation frequencies
@@ -23,9 +24,15 @@ analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
   #
   # Error checking:
   if (is.null(populations)){ 
-    stop("a list of subpopulation codes must be specified!") }
+    stop("a vector of subpopulation codes must be specified!") }
   if (is.null(sizes)){ 
-    stop("a list of subpopulation sizes must be specified!") }
+    stop("a vector of subpopulation sizes must be specified!") }
+  if (is.null(super)){ 
+    stop("a list of superpopulation info must be specified!") }
+  if (is.null(tables)){ 
+    stop("a list of data tables must be specified!") }
+  if (!(is.logical(verbose))){ 
+    stop("'verbose' must TRUE or FALSE!") }
   
   #___________________________ANALYZE SUBPOPULATIONS____________________________  
   # Initiate matrices and vectors to store the results.
@@ -45,7 +52,7 @@ analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
   # Matrix to store all pVectors.
   pFstMatrix.alt.median = matrix(nrow=0, ncol=length(populations))
   
-  #_________________________________ANALYZE_____________________________________
+  # ANALYZE...
   # Define input tables.
   coordinates = tables$coordinates
   altTable = varTable = totTable = NULL
@@ -60,7 +67,7 @@ analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
   # Go through every row of the table.
   for (r in 1:numRows){
     # Print the row number being analyzed.
-    cat("Analyzing row", r, "\n")
+    if (verbose) cat("Analyzing row", r, "\n")
     # Clear pVector for each row.
     pVector = c()
     
@@ -181,7 +188,11 @@ analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
   
   #___________________________ANALYZE SUPERPOPULATIONS____________________________
   if (!(is.null(altTable) & is.null(super))){ 
-    cat("Analyzing super-populations...\n")
+    if (verbose) cat("Analyzing super-populations...\n")
+    
+    altTable.super = matrix(ncol = 5, nrow = nrow(altTable))
+    colnames(altTable.super) = superNames
+    
     # Create the superpopulations table from altTable.
     superNames = super$superpopulations
     super.s = super$super.s
@@ -191,8 +202,6 @@ analyzeData <- function(populations = NULL, sizes = NULL, super = NULL, tables){
       sizes.super = c(sizes.super, sum(sizes[super.s[pop]:super.e[pop]]))
     }
 
-    altTable.super = matrix(ncol = 5, nrow = nrow(altTable))
-    colnames(altTable.super) = superNames
     # Change NA's to 0's.
     altTable[is.na(altTable)] = 0
     for (i in 1:length(superNames)){

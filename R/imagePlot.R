@@ -1,7 +1,7 @@
-# Function obtained from http://www.phaget4.org/R/image_matrix.html
+# Function ooriginally btained from http://www.phaget4.org/R/image_matrix.html
 
-myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL, 
-                        cex=0.7, lwd=0.3, sub=FALSE, ...){
+myImagePlot <- function(x, border = TRUE, min = NULL, max = NULL, cex = 0.7,
+                        lwd = 0.3, sub = FALSE, ...){
   superl = c("African", "American", "European", "East Asian", "South Asian")
   supers = c(0, 7, 11, 16, 21, 26)
   if (is.null(min)) min <- min(x)
@@ -89,7 +89,7 @@ myImagePlot <- function(x, border=TRUE, min=NULL, max=NULL,
     }
   }
   # Color Scale
-  par(mar = c(6,2.5,2.5,1))
+  par(mar = c(6,2.5,2.5,2))
   image(1, y=ColorLevels,
         z=matrix(data=ColorLevels, ncol=length(ColorLevels), nrow=1),
         col=ColorRamp,
