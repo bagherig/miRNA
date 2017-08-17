@@ -1,6 +1,6 @@
 #script.R
 #' Finds the variations within the miRNA coordinates and writes the results
-#' to a file named 'results.tsv'.
+#' to a file named default 'results.tsv'.
 #'
 #' @param populations A vector of population names.
 #' @param start The start chromosome number.
@@ -8,7 +8,7 @@
 #'
 #' @examples getVariations(c("ACB", "BEB"), 1, 5)
 #' 
-getVariations <- function(populations, start=1, end=22){
+getVariations <- function(populations, start=1, end=22, filename="results"){
   # Error checking:
   if (!(start %in% 1:22 & end %in% 1:22)){ 
     stop("'start' and 'end' must be a value between 1 to 22.")
@@ -18,22 +18,23 @@ getVariations <- function(populations, start=1, end=22){
   }
   
   mainPath = getwd()
-  gffPath = paste(mainPath, "/miRNA.gff3", sep = "")
+  gffPath = file.path(mainPath, "miRNA.gff3")
   len = length(populations)
   
   # Read miRNA coordinates file.
   gff = read.table(gffPath, sep="\t", quote="")
-  gff = gff[gff[,3]=="miRNA_primary_transcript", c(1,4,5,9)]
+  gff = gff[gff[, 3] == "miRNA_primary_transcript", c(1,4,5,9)]
   colnames(gff) = c("CHR", "START", "END", "INFO")
 
 #_______________________________________________________________________________
-  findVariations <- function(population, start, end){
-    vcfPath <- paste(mainPath, "/VCF/", population, sep = "")
-    resultsFile <- paste(vcfPath, "/results.tsv", sep = "")
+  findVariations <- function(population){
+    vcfPath = file.path(mainPath, "VCF", population)
+    filename = paste(filename, ".tsv", sep = "")
+    resultsFile = file.path(vcfPath, filename)
     
     # Data frame to store results.
-    results <- data.frame(CHR = character(0), NAME = character(0), 
-                          POS = character(0), ALT = character(0), 
+    results = data.frame(CHR = character(0), NAME = character(0), 
+                         POS = character(0), ALT = character(0), 
                           altFREQ = character(0), varFREQ = character(0),
                           totFREQ = numeric(0), SIZE = numeric(0), 
                           stringsAsFactors = FALSE)
@@ -54,13 +55,13 @@ getVariations <- function(populations, start=1, end=22){
       cat("VCF File Loaded.\n")
       
       # Subset miRNA coordinates of this chromosome.
-      mirna = gff[gff$CHR == paste("chr", chr, sep = ""),]
+      mirna = gff[gff$CHR == paste("chr", chr, sep = ""), ]
       if (nrow(mirna) != 0){
         for (i in 1:nrow(mirna)){
           mirStart = mirna$START[i]
           mirEnd = mirna$END[i]
           # Subset variations within the miRNA coordinates range.
-          vcf_filter = vcf[(vcf[,2] >= mirStart & vcf[,2] <= mirEnd),]
+          vcf_filter = vcf[(vcf[, 2] >= mirStart & vcf[, 2] <= mirEnd), ]
           if (nrow(vcf_filter) > 0){
             # Extract miRNA name.
             mirName = strsplit(toString(mirna$INFO[i]), ";")[[1]][3]
@@ -149,6 +150,6 @@ getVariations <- function(populations, start=1, end=22){
 #_______________________________________________________________________________
   
   for (pop in populations){
-    findVariations(pop, start, end)
+    findVariations(population = pop)
   }
 }

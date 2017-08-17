@@ -19,16 +19,16 @@ mergeData <- function(populations, alt = TRUE, var = TRUE, tot = TRUE){
     stop("At least one of alt, var, or tot must be TRUE.")
   }
   # Define the path to VCF folder.
-  path = paste(getwd(), "/VCF/", sep = "")
+  path = file.path(getwd(), "VCF")
   # Define the name of the file to be read.
-  fileName = "/results.tsv"
+  fileName = "results.tsv"
   # Variable for storing the merged table.
-  mer <- NULL
+  mer = NULL
   # Open and merge the results file of each subpopulation.
   for (pop in populations){
     cat ("Merging ", pop, "...\n", sep = "")
     # Read the results.tsv file of this population.
-    table <- read.table(paste(path, pop, fileName, sep = ""), sep = "\t", 
+    table <- read.table(file.path(path, pop, fileName), sep = "\t", 
                         header = TRUE, stringsAsFactors = FALSE)
     # Exclude any row that the total number of variations is less than 5 (since
     # they are insignificant). Also exclude column "SIZE".

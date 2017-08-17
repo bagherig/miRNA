@@ -1,8 +1,13 @@
 # main.R
 # A script to anylaze the VCF data and plot the results.
 #
-# Defining some variables:
+# Defining some variables and loading other .R files:
 if (TRUE){
+  source(file.path(getwd(), "R", "getVariations.R"))
+  source(file.path(getwd(), "R", "mergeData.R"))
+  source(file.path(getwd(), "R", "analyzeData.R"))
+  source(file.path(getwd(), "R", "getDendrogram.R"))
+  source(file.path(getwd(), "R", "imagePlot.R"))
   # A vector of subpopulation codes.
   populations = c("ACB", "ASW", "ESN", "GWD", "LWK", "MSL", "YRI", # [1:7] AFRICAN
                   "CLM", "MXL", "PEL", "PUR",                    # [8:11] AMERICAN
@@ -28,7 +33,7 @@ if (TRUE){
 }
 
 #______________________________EXTRACT_VARIATIONS_______________________________
-getVariations(populations[1])
+getVariations(populations[1], 1, 2, "results2")
 
 #______________________________MERGE_AND_ANALYZE________________________________
 # Merge tables.
