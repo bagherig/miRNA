@@ -28,6 +28,7 @@ The R code requires a specific directory structure. Create an R project (anywher
                         .
                ├── population n
 
+The VCF files with the correct directory structure can be found on dropbox in .gz format. Simply unzip both .gz files in a folder named 'VCF' under the project directory ('miRNA').
 
 # Running the analysis
 Simply follow main.R to run the analysis.
